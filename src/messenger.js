@@ -129,6 +129,13 @@ class Messenger extends EventEmitter {
       }
     }
 
+    if (type === 'template' && options.elements) {
+      message.attachment.payload = {
+        'template_type': 'generic',
+        'elements': options.elements
+      }
+    }
+
     if (options.isReusable && _.isBoolean(options.isReusable)) {
       message.attachment.payload.is_reusable = options.isReusable
     }
