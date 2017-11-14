@@ -11,7 +11,7 @@ const create = obj => {
   })
 
   const messageId = new Date().toISOString() + Math.random()
-  
+
   const newEvent = Object.assign({
     _promise: promise,
     _resolve: resolve,
@@ -35,7 +35,7 @@ const validateUserId = (userId) => {
 }
 
 const validateText = (text) => {
-  if (typeof(text) !== 'string' || text.length > 300) {
+  if (typeof (text) !== 'string' || text.length > 300) {
     throw new Error('Text must be a string less than 300 chars.')
   }
 }
@@ -49,8 +49,8 @@ const validateQuickReplies = (quick_replies) => {
 }
 
 const validateQuickReply = (quick_reply) => {
-  if (typeof(quick_reply) !== 'string') {
-    if (!quick_reply || typeof(quick_reply.title) !== 'string') {
+  if (typeof (quick_reply) !== 'string') {
+    if (!quick_reply || typeof (quick_reply.title) !== 'string') {
       throw new Error('Expected quick_reply to be a string or an object' +
         'with a title.')
     }
@@ -64,7 +64,7 @@ const validateTyping = (typing) => {
 }
 
 const validateAttachmentType = (type) => {
-  if (typeof(type) !== 'string') {
+  if (typeof (type) !== 'string') {
     throw new Error('Expected attachment type to be a text')
   }
 
@@ -74,7 +74,7 @@ const validateAttachmentType = (type) => {
 }
 
 const validateUrl = (url) => {
-  if (typeof(url) !== 'string') {
+  if (typeof (url) !== 'string') {
     throw new Error('Expected URL to be a string')
   }
 }
@@ -84,7 +84,7 @@ const validateTemplatePayload = (payload) => {
     throw new Error('Template payload must be a plain object')
   }
 
-  if (typeof(payload.template_type) !== 'string') {
+  if (typeof (payload.template_type) !== 'string') {
     throw new Error('"template_type" must be set')
   }
 }
@@ -131,11 +131,11 @@ const createText = (userId, text, options) => {
 const createAttachment = (userId, type, url, options) => {
   validateUserId(userId)
   validateAttachmentType(type)
-  
-  if ( _.isNull(url) && !(options && options.attachmentId) ) {
+
+  if (_.isNull(url) && !(options && options.attachmentId)) {
     throw new Error('If URL is null, you must pass an attachment_id on options object')
   }
-  else if ( options && options.attachmentId ) {
+  else if (options && options.attachmentId) {
     validateText(options.attachmentId)
   }
   else {
@@ -183,6 +183,7 @@ const createTemplate = (userId, payload, options) => {
     raw: {
       to: userId,
       payload: payload,
+      quick_replies: (options && options.quick_replies),
       typing: (options && options.typing),
       waitRead: options && options.waitRead,
       waitDelivery: options && options.waitDelivery
