@@ -68,7 +68,7 @@ const validateAttachmentType = (type) => {
     throw new Error('Expected attachment type to be a text')
   }
 
-  if (!_.includes(['image', 'video', 'audio', 'file', 'template'], type.toLowerCase())) {
+  if (!_.includes(['image', 'video', 'audio', 'file'], type.toLowerCase())) {
     throw new Error('Invalid attachment type')
   }
 }

@@ -30,6 +30,7 @@ const handleTemplate = (event, next, messenger) => {
   return handlePromise(next, messenger.sendTemplate(
     event.raw.to,
     event.raw.payload,
+    event.raw.quick_replies,
     event.raw))
 }
 
