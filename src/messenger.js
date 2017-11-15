@@ -17,7 +17,7 @@ import DB from './db'
 
 fetch.promise = Promise
 
-const normalizeString = function (str){
+const normalizeString = function(str) {
   return str.replace(/[^a-zA-Z0-9]+/g, '').toUpperCase()
 }
 
