@@ -452,6 +452,7 @@ By using this function, you can send any type of attachment to your users ([face
 - `typing`
 - `waitDelivery` the returning Promise will resolve only when the message is delivered to the user
 - `waitRead` the returning Promise will resolve only when the user reads the message
+- `elements` only for 'template' type
 
 ##### Returns
 
@@ -471,7 +472,7 @@ bp.messenger.sendAttachment(userId, type, url)
 
 By using this module, it's easy to send any type of supported template to your users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/templates)).
 
-#### `sendTemplate(userId, payload, [options])` -> Promise
+#### `sendTemplate(userId, payload, [quickReplies], [options])` -> Promise
 
 ##### Arguments
 
@@ -479,7 +480,9 @@ By using this module, it's easy to send any type of supported template to your u
 
 2. ` payload ` (_Object_): Specific `payload` object for your selected template. Actually, many types of template (button, generic, list, receipt...) are supported by Messenger.
 
-3. ` options ` (_Object_): An object that may contains:
+3. ` quickReplies ` (_Array_): An array of quick replies to attach to the template
+
+4. ` options ` (_Object_): An object that may contains:
 - `typing`
 - `waitDelivery` the returning Promise will resolve only when the message is delivered to the user
 - `waitRead` the returning Promise will resolve only when the user reads the message
@@ -504,7 +507,13 @@ const payload = {
     ]
 }
 
-bp.messenger.sendTemplate(userId, payload, { typing: 2000 })
+const quickReplies = [{
+  content_type :"text",
+  title: "Option",
+  payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION"
+}];
+
+bp.messenger.sendTemplate(userId, payload, quickReplies, { typing: 2000 })
 ```
 
 #### Quick replies

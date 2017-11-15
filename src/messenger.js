@@ -103,21 +103,27 @@ class Messenger extends EventEmitter {
     return this.sendTemplate(recipientId, payload, options)
   }
 
-  sendGenericTemplate(recipientId, elements, options) {
+  sendGenericTemplate(recipientId, elements, quickReplies, options) {
     const payload = {
       template_type: 'generic',
       elements
     }
-    return this.sendTemplate(recipientId, payload, options)
+    return this.sendTemplate(recipientId, payload, quickReplies, options)
   }
 
-  sendTemplate(recipientId, payload, options) {
+  sendTemplate(recipientId, payload, quickReplies, options) {
     const message = {
       attachment: {
         type: 'template',
         payload
       }
     }
+
+    const formattedQuickReplies = this._formatQuickReplies(quickReplies)
+    if (formattedQuickReplies && formattedQuickReplies.length > 0) {
+      message.quick_replies = formattedQuickReplies
+    }
+
     return this.sendMessage(recipientId, message, options)
   }
 

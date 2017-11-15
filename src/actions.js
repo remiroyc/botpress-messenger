@@ -50,7 +50,7 @@ const validateQuickReplies = (quick_replies) => {
 
 const validateQuickReply = (quick_reply) => {
   if (typeof(quick_reply) !== 'string') {
-    if (!quick_reply || typeof(quick_reply.title) !== 'string') {
+    if (!quick_reply || (typeof(quick_reply.title) !== 'string' && quick_reply.content_type !== 'location')) {
       throw new Error('Expected quick_reply to be a string or an object' +
         'with a title.')
     }
@@ -168,12 +168,16 @@ const createAttachment = (userId, type, url, options) => {
   })
 }
 
-const createTemplate = (userId, payload, options) => {
+const createTemplate = (userId, payload, quickReplies, options) => {
   validateUserId(userId)
   validateTemplatePayload(payload)
 
   if (options && options.typing) {
     validateTyping(options.typing)
+  }
+
+  if (quickReplies) {
+    validateQuickReplies(quickReplies)
   }
 
   return create({
@@ -183,6 +187,7 @@ const createTemplate = (userId, payload, options) => {
     raw: {
       to: userId,
       payload: payload,
+      quick_replies: quickReplies,
       typing: (options && options.typing),
       waitRead: options && options.waitRead,
       waitDelivery: options && options.waitDelivery
