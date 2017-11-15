@@ -443,7 +443,7 @@ By using this function, you can send any type of attachment to your users ([face
 
 1. ` userId ` (_String_): Correspond to unique Messenger's recipient identifier
 
-2. ` type ` (_String_): Specific type of  attachment can be `'audio'`, `'file'`, `'image'`, `'video'` or `'template'`
+2. ` type ` (_String_): Specific type of  attachment can be `'audio'`, `'file'`, `'image'` or `'video'`
 
 3. ` url ` (_String_): Correspond to specific url of the attachment that need to be sent.
 
