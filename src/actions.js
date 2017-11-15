@@ -35,7 +35,7 @@ const validateUserId = (userId) => {
 }
 
 const validateText = (text) => {
-  if (typeof (text) !== 'string' || text.length > 300) {
+  if (typeof(text) !== 'string' || text.length > 300) {
     throw new Error('Text must be a string less than 300 chars.')
   }
 }
@@ -49,8 +49,8 @@ const validateQuickReplies = (quick_replies) => {
 }
 
 const validateQuickReply = (quick_reply) => {
-  if (typeof (quick_reply) !== 'string') {
-    if (!quick_reply || typeof (quick_reply.title) !== 'string') {
+  if (typeof(quick_reply) !== 'string') {
+    if (!quick_reply || typeof(quick_reply.title) !== 'string') {
       throw new Error('Expected quick_reply to be a string or an object' +
         'with a title.')
     }
@@ -64,7 +64,7 @@ const validateTyping = (typing) => {
 }
 
 const validateAttachmentType = (type) => {
-  if (typeof (type) !== 'string') {
+  if (typeof(type) !== 'string') {
     throw new Error('Expected attachment type to be a text')
   }
 
@@ -74,7 +74,7 @@ const validateAttachmentType = (type) => {
 }
 
 const validateUrl = (url) => {
-  if (typeof (url) !== 'string') {
+  if (typeof(url) !== 'string') {
     throw new Error('Expected URL to be a string')
   }
 }
@@ -84,7 +84,7 @@ const validateTemplatePayload = (payload) => {
     throw new Error('Template payload must be a plain object')
   }
 
-  if (typeof (payload.template_type) !== 'string') {
+  if (typeof(payload.template_type) !== 'string') {
     throw new Error('"template_type" must be set')
   }
 }
