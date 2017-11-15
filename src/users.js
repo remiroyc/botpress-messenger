@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-module.exports = function(bp, messenger) {
+module.exports = function (bp, messenger) {
 
   function profileToDbEntry(profile) {
     return {

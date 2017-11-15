@@ -6,7 +6,7 @@ function initialize() {
   if (!knex) {
     throw new Error('you must initialize the database before')
   }
-  
+
   return DatabaseHelpers(knex).createTableIfNotExists('messenger_attachments', function (table) {
     table.string('url').primary()
     table.string('attachment_id')

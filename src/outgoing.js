@@ -40,13 +40,13 @@ const handleTyping = (event, next, messenger) => {
 }
 
 const handleSeen = (event, next, messenger) => {
-  return handlePromise(next, 
+  return handlePromise(next,
     messenger.sendAction(event.raw.to, 'mark_seen'))
 }
 
 const handleGetStarted = (event, next, messenger) => {
   if (event.raw.enabled) {
-    return handlePromise(next, 
+    return handlePromise(next,
       messenger.setGetStartedButton(event.raw.postback))
   } else {
     return handlePromise(next, messenger.deleteGetStartedButton())
@@ -57,14 +57,14 @@ const handlePersistentMenu = (event, next, messenger) => {
   if (event.raw.delete) {
     return handlePromise(next, messenger.deletePersistentMenu())
   } else {
-    return handlePromise(next, 
+    return handlePromise(next,
       messenger.setPersistentMenu(event.raw.elements))
   }
 }
 
 const handleGreetingText = (event, next, messenger) => {
   if (event.raw.text) {
-    return handlePromise(next, 
+    return handlePromise(next,
       messenger.setGreetingText(event.raw.text))
   } else {
     return handlePromise(next, messenger.deleteGreetingText(event.raw.text))
@@ -72,7 +72,7 @@ const handleGreetingText = (event, next, messenger) => {
 }
 
 const handleWhitelistedDomains = (event, next, messenger) => {
-  return handlePromise(next, 
+  return handlePromise(next,
     messenger.setWhitelistedDomains(event.raw.domains))
 }
 

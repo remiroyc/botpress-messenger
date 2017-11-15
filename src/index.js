@@ -50,49 +50,49 @@ const outgoingMiddleware = (event, next) => {
   }
 
   outgoing[event.type](event, next, messenger)
-  .then(setValue('resolve'), setValue('reject'))
+    .then(setValue('resolve'), setValue('reject'))
 }
 
 const initializeMessenger = (bp, configurator) => {
   return configurator.loadAll()
-  .then(config => {
-    messenger = new Messenger(bp, config)
+    .then(config => {
+      messenger = new Messenger(bp, config)
 
-    users = Users(bp, messenger)
+      users = Users(bp, messenger)
 
-    const configErrors = messenger.getConfigErrors()
-    const enabled = config.enabled
+      const configErrors = messenger.getConfigErrors()
+      const enabled = config.enabled
 
-    if (!enabled) {
-      return bp.logger.warn('[botpress-messenger] Connection disabled.')
-    }
-
-    if (configErrors.length) {
-      for (var err of configErrors) {
-        bp.logger.warn('[botpress-messenger] ' + err.message)
+      if (!enabled) {
+        return bp.logger.warn('[botpress-messenger] Connection disabled.')
       }
 
-      return bp.notifications.send({
-        level: 'error',
-        message: 'Error updating Messenger App. Please see logs for details.'
-      })
-    }
+      if (configErrors.length) {
+        for (var err of configErrors) {
+          bp.logger.warn('[botpress-messenger] ' + err.message)
+        }
 
-    return messenger.connect()
-    .then(() => messenger.updateSettings())
-    .then(() => bp.notifications.send({
-      level: 'success',
-      message: 'Configuration and webhook updated'
-    }))
-    .catch(err => {
-      bp.logger.error(err)
-      return bp.notifications.send({
-        level: 'error',
-        message: 'Error updating Messenger App. Please see logs for details.'
-      })
+        return bp.notifications.send({
+          level: 'error',
+          message: 'Error updating Messenger App. Please see logs for details.'
+        })
+      }
+
+      return messenger.connect()
+        .then(() => messenger.updateSettings())
+        .then(() => bp.notifications.send({
+          level: 'success',
+          message: 'Configuration and webhook updated'
+        }))
+        .catch(err => {
+          bp.logger.error(err)
+          return bp.notifications.send({
+            level: 'error',
+            message: 'Error updating Messenger App. Please see logs for details.'
+          })
+        })
+
     })
-
-  })
 }
 
 const createConfigFile = (bp) => {
@@ -127,7 +127,7 @@ module.exports = {
     persistentMenuItems: { type: 'any', required: false, default: [], validation: v => _.isArray(v) },
     composerInputDisabled: { type: 'bool', required: false, default: false },
     automaticallyMarkAsRead: { type: 'bool', required: false, default: true },
-    targetAudience: { type: 'string', required: true, default: 'openToAll'},
+    targetAudience: { type: 'string', required: true, default: 'openToAll' },
     targetAudienceOpenToSome: { type: 'string', required: false },
     targetAudienceCloseToSome: { type: 'string', required: false },
     trustedDomains: { type: 'any', required: false, default: [], validation: v => _.isArray(v) },
@@ -140,9 +140,9 @@ module.exports = {
     chatExtensionHomeUrl: { type: 'string', required: false, default: '' },
     chatExtensionInTest: { type: 'bool', required: false, default: true },
     chatExtensionShowShareButton: { type: 'bool', required: false, default: false },
-    webhookSubscriptionFields: { 
-      type: 'any', 
-      required: true, 
+    webhookSubscriptionFields: {
+      type: 'any',
+      required: true,
       default: [
         'message_deliveries',
         'message_reads',
@@ -154,7 +154,7 @@ module.exports = {
     }
   },
 
-  init: function(bp) {
+  init: function (bp) {
 
     checkVersion(bp, __dirname)
 
@@ -165,19 +165,19 @@ module.exports = {
       handler: outgoingMiddleware,
       module: 'botpress-messenger',
       description: 'Sends out messages that targets platform = messenger.' +
-      ' This middleware should be placed at the end as it swallows events once sent.'
+        ' This middleware should be placed at the end as it swallows events once sent.'
     })
 
     bp.messenger = {}
     _.forIn(actions, (action, name) => {
 
-      const applyFn = fn => function() {
+      const applyFn = fn => function () {
         var msg = action.apply(this, arguments)
         const promise = msg._promise
         return fn && fn(msg, promise)
       }
 
-      const deprecate = fn => function() {
+      const deprecate = fn => function () {
         return (bp.lts && bp.lts.deprecate({
           module: 'botpress-messenger',
           message: 'create___ and send___ methods have been deprecated in favor of UMM and will be officially removed in Botpress v2.0',
@@ -194,85 +194,85 @@ module.exports = {
     UMM(bp) // Initializes Messenger in the UMM
   },
 
-  ready: function(bp, config) {
+  ready: function (bp, config) {
     initializeMessenger(bp, config)
-    .then(() => {
-      incoming(bp, messenger)
+      .then(() => {
+        incoming(bp, messenger)
 
-      bp.messenger._internal = messenger
+        bp.messenger._internal = messenger
 
-      const router = bp.getRouter('botpress-messenger')
+        const router = bp.getRouter('botpress-messenger')
 
-      router.get('/config', (req, res) => {
-        res.send(messenger.getConfig())
-      })
-
-      router.post('/config', (req, res) => {
-        messenger.setConfig(req.body)
-        config.saveAll(messenger.getConfig())
-        .then(() => messenger.updateSettings())
-        .then(() => res.sendStatus(200))
-        .catch((err) => {
-          res.status(500).send({ message: err.message })
+        router.get('/config', (req, res) => {
+          res.send(messenger.getConfig())
         })
-      })
 
-      router.post('/connection', (req, res) => {
-        if (messenger.getConfig().connected) {
-          messenger.disconnect()
-          .then(() => res.sendStatus(200))
-          .catch((err) => res.status(500).send({ message: err.message }))
-        } else {
-          messenger.connect()
-          .then(() => res.sendStatus(200))
-          .catch((err) => res.status(500).send({ message: err.message }))
-        }
-      })
-
-      router.post('/validation', (req, res) => {
-        messenger.sendValidationRequest()
-        .then((json) => {
-          res.send(json)
+        router.post('/config', (req, res) => {
+          messenger.setConfig(req.body)
+          config.saveAll(messenger.getConfig())
+            .then(() => messenger.updateSettings())
+            .then(() => res.sendStatus(200))
+            .catch((err) => {
+              res.status(500).send({ message: err.message })
+            })
         })
-        .catch((err) => {
-          res.status(500).send({ message: err.message })
+
+        router.post('/connection', (req, res) => {
+          if (messenger.getConfig().connected) {
+            messenger.disconnect()
+              .then(() => res.sendStatus(200))
+              .catch((err) => res.status(500).send({ message: err.message }))
+          } else {
+            messenger.connect()
+              .then(() => res.sendStatus(200))
+              .catch((err) => res.status(500).send({ message: err.message }))
+          }
         })
-      })
 
-      router.get('/homepage', (req, res) => {
-        const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')))
-        res.send({ homepage: packageJSON.homepage })
-      })
-
-      router.get('/users', (req, res)=> {
-        users.getAllUsers()
-        .then((values) => {
-          res.send(values)
+        router.post('/validation', (req, res) => {
+          messenger.sendValidationRequest()
+            .then((json) => {
+              res.send(json)
+            })
+            .catch((err) => {
+              res.status(500).send({ message: err.message })
+            })
         })
-        .catch((err) => res.status.send(500).send({ message:err.message }))
-      })
 
-      router.post('/remove_payment_tester', (req, res) => {
-        messenger.deletePaymentTester(req.body.payment_tester)
-          .then((json)=> {
-            res.send(json)
-          })
-          .catch((err) => {
-            res.status(500).send({ message: err.message })
-          })
-      })
+        router.get('/homepage', (req, res) => {
+          const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')))
+          res.send({ homepage: packageJSON.homepage })
+        })
 
-      router.get('/facebook_page', (req, res) => {
-        messenger._getPage()
-          .then((json) => {
-            res.send(json)
-          })
-          .catch((err) => {
-            res.status(500).send({ message: err.message })
-          })
-      })
+        router.get('/users', (req, res) => {
+          users.getAllUsers()
+            .then((values) => {
+              res.send(values)
+            })
+            .catch((err) => res.status.send(500).send({ message: err.message }))
+        })
 
-    })
+        router.post('/remove_payment_tester', (req, res) => {
+          messenger.deletePaymentTester(req.body.payment_tester)
+            .then((json) => {
+              res.send(json)
+            })
+            .catch((err) => {
+              res.status(500).send({ message: err.message })
+            })
+        })
+
+        router.get('/facebook_page', (req, res) => {
+          messenger._getPage()
+            .then((json) => {
+              res.send(json)
+            })
+            .catch((err) => {
+              res.status(500).send({ message: err.message })
+            })
+        })
+
+      })
 
   }
 }
