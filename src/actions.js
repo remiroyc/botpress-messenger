@@ -168,7 +168,7 @@ const createAttachment = (userId, type, url, options) => {
   })
 }
 
-const createTemplate = (userId, payload, quickReplies, options) => {
+const createTemplate = (userId, payload, options) => {
   validateUserId(userId)
   validateTemplatePayload(payload)
 
@@ -176,8 +176,8 @@ const createTemplate = (userId, payload, quickReplies, options) => {
     validateTyping(options.typing)
   }
 
-  if (quickReplies) {
-    validateQuickReplies(quickReplies)
+  if (options && options.quick_replies) {
+    validateQuickReplies(options.quick_replies)
   }
 
   return create({
@@ -187,7 +187,7 @@ const createTemplate = (userId, payload, quickReplies, options) => {
     raw: {
       to: userId,
       payload: payload,
-      quick_replies: quickReplies,
+      quick_replies: options && options.quick_replies,
       typing: (options && options.typing),
       waitRead: options && options.waitRead,
       waitDelivery: options && options.waitDelivery
