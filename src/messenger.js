@@ -17,7 +17,7 @@ import DB from './db'
 
 fetch.promise = Promise
 
-const normalizeString = function (str) {
+const normalizeString = function (str){
   return str.replace(/[^a-zA-Z0-9]+/g, '').toUpperCase()
 }
 
@@ -34,10 +34,10 @@ class Messenger extends EventEmitter {
     this.bp = bp
 
     bp.db.get()
-      .then(k => {
-        db = DB(k)
-        db.initialize()
-      })
+    .then(k => {
+      db = DB(k)
+      db.initialize()
+    })
 
     this.app = bp.getRouter('botpress-messenger', {
       'bodyParser.json': false,
@@ -77,7 +77,7 @@ class Messenger extends EventEmitter {
 
   connect() {
     return this._setupNewWebhook()
-      .then(() => this._subscribePage())
+    .then(() => this._subscribePage())
   }
 
   disconnect() {
@@ -139,7 +139,7 @@ class Messenger extends EventEmitter {
       message.attachment.payload.is_reusable = options.isReusable
     }
 
-    if (options.attachmentId) {
+    if (options.attachmentId){
       message.attachment.payload = {
         attachment_id: options.attachmentId,
       }
@@ -159,11 +159,11 @@ class Messenger extends EventEmitter {
     }
 
     return this.sendMessage(recipientId, message, options)
-      .then(res => {
-        if (res && res.attachment_id) {
-          db.addAttachment(url, res.attachment_id)
-        }
-      })
+    .then(res => {
+      if (res && res.attachment_id) {
+        db.addAttachment(url, res.attachment_id)
+      }
+    })
   }
 
   sendAction(recipientId, action) {
@@ -198,7 +198,7 @@ class Messenger extends EventEmitter {
 
     return fetch(`https://graph.facebook.com/v2.7/${applicationID}/subscriptions_sample`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         object_id: applicationID,
         object: 'page',
@@ -207,8 +207,8 @@ class Messenger extends EventEmitter {
         access_token: accessToken
       })
     })
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
   }
 
   sendRequest(body, endpoint, method) {
@@ -221,12 +221,12 @@ class Messenger extends EventEmitter {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     })
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
-      .then(json => {
-        this._handleEvent('raw_send_request', { url, token: this.config.accessToken, body, endpoint, method, response: json })
-        return json
-      })
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .then(json => {
+      this._handleEvent('raw_send_request', { url, token: this.config.accessToken, body, endpoint, method, response: json })
+      return json
+    })
   }
 
   sendThreadRequest(body, method) {
@@ -246,8 +246,8 @@ class Messenger extends EventEmitter {
       : Promise.resolve(true)
 
     return before
-      .delay(timeout + 1000)
-      .then(() => this.sendAction(recipientId, 'typing_off'))
+    .delay(timeout + 1000)
+    .then(() => this.sendAction(recipientId, 'typing_off'))
   }
 
   getUserProfile(userId) {
@@ -261,7 +261,7 @@ class Messenger extends EventEmitter {
   createTargetAudienceSetting() {
     var setting = { target_audience: {} }
 
-    switch (this.config.targetAudience) {
+    switch(this.config.targetAudience){
       case 'openToAll':
         setting.target_audience.audience_type = 'all'
         break;
@@ -301,8 +301,8 @@ class Messenger extends EventEmitter {
     // so we need to check:
     //    a) that it's set, and
     //    b) that it's not already in the list
-    if (!_.isEmpty(chatExtensionHomeUrl)) {
-      if (domains.indexOf(chatExtensionHomeUrl) == -1) {
+    if(!_.isEmpty(chatExtensionHomeUrl)) {
+      if(domains.indexOf(chatExtensionHomeUrl) == -1) {
         domains.push(chatExtensionHomeUrl);
       }
     }
@@ -310,7 +310,7 @@ class Messenger extends EventEmitter {
     const url = `https://graph.facebook.com/v2.6/me/messenger_profile?access_token=${this.config.accessToken}`
 
     await fetch(url, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
-      .then(this._handleFacebookResponse)
+    .then(this._handleFacebookResponse)
 
     if (domains.length === 0) {
       return
@@ -325,7 +325,7 @@ class Messenger extends EventEmitter {
         domain_action_type: 'add'
       })
     })
-      .then(this._handleFacebookResponse)
+    .then(this._handleFacebookResponse)
   }
 
   setGreetingText(text) {
@@ -349,7 +349,7 @@ class Messenger extends EventEmitter {
     return this.sendThreadRequest({
       setting_type: 'call_to_actions',
       thread_state: 'new_thread',
-      call_to_actions: [{ payload }]
+      call_to_actions: [ { payload } ]
     })
   }
 
@@ -375,7 +375,7 @@ class Messenger extends EventEmitter {
 
   deletePersistentMenu() {
     return this.sendRequest({
-      "fields": ["persistent_menu"]
+      "fields":[ "persistent_menu" ]
     }, 'messenger_profile', 'DELETE')
   }
 
@@ -387,15 +387,15 @@ class Messenger extends EventEmitter {
    */
   createChatExtensionHomeUrlSetting(home_url, in_test, show_share) {
     var show_string = "hide"
-    if (show_share == true) {
+    if (show_share == true){
       show_string = "show"
     }
 
     return {
-      "home_url": {
+      "home_url" : {
         "url": home_url,
         "webview_height_ratio": "tall",
-        "in_test": in_test,
+        "in_test":in_test,
         "webview_share_button": show_string
       }
     }
@@ -442,7 +442,7 @@ class Messenger extends EventEmitter {
   }
 
   setPaymentTesters() {
-    if (this.config.paymentTesters.length == 0) {
+    if(this.config.paymentTesters.length == 0) {
       return
     }
     const setting = this.createPaymentTesterSetting()
@@ -454,7 +454,7 @@ class Messenger extends EventEmitter {
     return this.sendThreadRequest(setting, "POST")
   }
 
-  getPageDetails() {
+  getPageDetails(){
     return this._getPage()
   }
 
@@ -489,24 +489,24 @@ class Messenger extends EventEmitter {
     }
 
     return updateGetStarted()
-      .catch(contextifyError('get started'))
-      .then(updateGreetingText)
-      .catch(contextifyError('greeting text'))
-      .then(updatePersistentMenu)
-      .catch(contextifyError('persistent menu'))
-      .then(updateTargetAudience)
-      .catch(contextifyError('target audience'))
-      .then(updateTrustedDomains)
-      .catch(contextifyError('trusted domains'))
-      .then(updateChatExtensionHomeUrl)
-      .catch(contextifyError('chat extensions'))
-      .then(updatePaymentTesters)
-      .catch(contextifyError('payment testers'))
+    .catch(contextifyError('get started'))
+    .then(updateGreetingText)
+    .catch(contextifyError('greeting text'))
+    .then(updatePersistentMenu)
+    .catch(contextifyError('persistent menu'))
+    .then(updateTargetAudience)
+    .catch(contextifyError('target audience'))
+    .then(updateTrustedDomains)
+    .catch(contextifyError('trusted domains'))
+    .then(updateChatExtensionHomeUrl)
+    .catch(contextifyError('chat extensions'))
+    .then(updatePaymentTesters)
+    .catch(contextifyError('payment testers'))
 
   }
 
   module(factory) {
-    return factory.apply(this, [this])
+    return factory.apply(this, [ this ])
   }
 
   _formatButtons(buttons) {
@@ -598,13 +598,13 @@ class Messenger extends EventEmitter {
     errorMessage += '\nStatus: ' + res.status + ' (' + res.statusText + ')'
 
     return Promise.resolve(true)
-      .then(() => res.json())
-      .then(json => {
-        errorMessage += '\n' + json.error.message
-      })
-      .finally(() => {
-        throw new Error(errorMessage)
-      })
+    .then(() => res.json())
+    .then(json => {
+      errorMessage += '\n' + json.error.message
+    })
+    .finally(() => {
+      throw new Error(errorMessage)
+    })
   }
 
   _initWebhook() {
@@ -656,7 +656,7 @@ class Messenger extends EventEmitter {
             this._handleEvent('optin', event)
           } else if (event.referral) {
             this._handleEvent('referral', event)
-          } else if (event.payment) {
+          } else if (event.payment){
             this._handleEvent('payment', event)
           }
           else {
@@ -714,48 +714,48 @@ class Messenger extends EventEmitter {
     const url = `https://graph.facebook.com/v2.7/${this.config.applicationID}/subscriptions?access_token=`
 
     return fetch(oAuthUrl)
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
-      .then(json => json.access_token)
-      .then(token => fetch(url + token, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          object: 'page',
-          callback_url: 'https://' + this.config.hostname + '/api/botpress-messenger/webhook',
-          verify_token: this.config.verifyToken,
-          fields: this.config.webhookSubscriptionFields
-        })
-      }))
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .then(json => json.access_token)
+    .then(token => fetch(url + token, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        object: 'page',
+        callback_url: 'https://' + this.config.hostname + '/api/botpress-messenger/webhook',
+        verify_token: this.config.verifyToken,
+        fields: this.config.webhookSubscriptionFields
+      })
+    }))
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
   }
 
   _subscribePage() {
     const url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + this.config.accessToken
 
     return fetch(url, { method: 'POST' })
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
-      .catch(err => console.log(err))
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .catch(err => console.log(err))
   }
 
   _unsubscribePage() {
     const url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + this.config.accessToken
 
     return fetch(url, { method: 'DELETE' })
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
-      .catch(err => console.log(err))
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .catch(err => console.log(err))
   }
 
   _getPage() {
     const url = 'https://graph.facebook.com/v2.6/me/?access_token=' + this.config.accessToken
 
     return fetch(url, { method: 'GET' })
-      .then(this._handleFacebookResponse)
-      .then(res => res.json())
-      .catch(err => console.log(err))
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .catch(err => console.log(err))
   }
 
 }

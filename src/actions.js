@@ -11,7 +11,7 @@ const create = obj => {
   })
 
   const messageId = new Date().toISOString() + Math.random()
-
+  
   const newEvent = Object.assign({
     _promise: promise,
     _resolve: resolve,
@@ -131,11 +131,11 @@ const createText = (userId, text, options) => {
 const createAttachment = (userId, type, url, options) => {
   validateUserId(userId)
   validateAttachmentType(type)
-
-  if (_.isNull(url) && !(options && options.attachmentId)) {
+  
+  if ( _.isNull(url) && !(options && options.attachmentId) ) {
     throw new Error('If URL is null, you must pass an attachment_id on options object')
   }
-  else if (options && options.attachmentId) {
+  else if ( options && options.attachmentId ) {
     validateText(options.attachmentId)
   }
   else {
